@@ -13,20 +13,20 @@
 
     <PropertyGroup>
         <PackageOutputPath>$(MSBuildProjectDirectory)\..\Nuget\output</PackageOutputPath>
-        <Version>120.6099.211</Version>
+        <Version>120.7000.0</Version>
         <Authors>XiliumHQ,OutSystems</Authors>
         <Product>CefGlue</Product>
         <AssemblyTitle>CefGlue</AssemblyTitle>
         <Description>CefGlue is a .NET binding for The Chromium Embedded Framework (CEF) by Marshall A. Greenblatt.</Description>
         <Copyright>Copyright &#xA9; XiliumHQ 2021. Copyright &#xA9; OutSystems 2021.</Copyright>
-        <PackageDescription>ChromiumEmbedded. $(Description)</PackageDescription>
+        <PackageDescription>ChromiumEmbedded. $(Description) Quantower fork: Avalonia 12 support and off-screen rendering DPI fixes.</PackageDescription>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageTags>cef, chromium, chrome browser, cefglue</PackageTags>
         <!-- <PackageIcon></PackageIcon> -->
         <IncludeSymbols>false</IncludeSymbols>
         <IncludeSource>false</IncludeSource>
-        <RepositoryUrl>https://github.com/OutSystems/CefGlue</RepositoryUrl>
+        <RepositoryUrl>https://github.com/Quantower/CefGlue</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <NoWarn>$(NoWarn);NU5100;NU5118;CS1591</NoWarn>
         <AddSyntheticProjectReferencesForSolutionDependencies>false</AddSyntheticProjectReferencesForSolutionDependencies>
