@@ -23,6 +23,7 @@ namespace Xilium.CefGlue.Avalonia.Platform
         private const int MouseWheelDelta = 100;
 
         private IDisposable _windowStateChangedObservable;
+        private TopLevel _topLevel;
 
         private PointerPressedEventArgs _lastPointerEvent;
         private Cursor _currentDragCursor;
@@ -179,6 +180,13 @@ namespace Xilium.CefGlue.Avalonia.Platform
             _previousCursor = null;
             _currentDragCursor = null;
             _windowStateChangedObservable?.Dispose();
+
+            if (_topLevel != null)
+            {
+                _topLevel.ScalingChanged -= OnScalingChanged;
+                _topLevel = null;
+            }
+
             VisibilityChanged(false);
         }
 
@@ -190,13 +198,31 @@ namespace Xilium.CefGlue.Avalonia.Platform
                 _windowStateChangedObservable = newWindow.GetPropertyChangedObservable(Window.WindowStateProperty).Subscribe(new AnonymousObserver<AvaloniaPropertyChangedEventArgs>(OnHostWindowStateChanged));
             }
 
-            // In Avalonia 12, safely read the current window's scaling factor through TopLevel
-            var topLevel = TopLevel.GetTopLevel(_control);
-            if (topLevel != null && topLevel.RenderScaling != RenderSurface.DeviceScaleFactor)
+            _topLevel = TopLevel.GetTopLevel(_control);
+            if (_topLevel != null)
             {
-                RenderSurface.DeviceScaleFactor = (float)topLevel.RenderScaling;
-                ScreenInfoChanged?.Invoke(RenderSurface.DeviceScaleFactor);
+                _topLevel.ScalingChanged += OnScalingChanged;
+                UpdateDeviceScaleFactor(_topLevel.RenderScaling);
             }
+        }
+
+        private void OnScalingChanged(object sender, EventArgs e)
+        {
+            if (_topLevel != null)
+            {
+                UpdateDeviceScaleFactor(_topLevel.RenderScaling);
+            }
+        }
+
+        private void UpdateDeviceScaleFactor(double renderScaling)
+        {
+            if (renderScaling == RenderSurface.DeviceScaleFactor)
+            {
+                return;
+            }
+
+            RenderSurface.DeviceScaleFactor = (float)renderScaling;
+            ScreenInfoChanged?.Invoke(RenderSurface.DeviceScaleFactor);
         }
 
         private void OnHostWindowStateChanged(AvaloniaPropertyChangedEventArgs e)
