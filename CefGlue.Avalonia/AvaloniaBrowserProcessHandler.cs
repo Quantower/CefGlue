@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Reactive.Linq;
-using ReactiveUI.Avalonia;
+using System.Threading;
+using Avalonia.Threading;
 using Xilium.CefGlue.Common.Handlers;
 
 namespace Xilium.CefGlue.Avalonia
 {
     internal class AvaloniaBrowserProcessHandler : BrowserProcessHandler
     {
-        private IDisposable _current;
+        private Timer _current;
         private object _schedule = new object();
 
         protected override void OnScheduleMessagePumpWork(long delayMs)
@@ -24,10 +24,8 @@ namespace Xilium.CefGlue.Avalonia
                     delayMs = 1;
                 }
 
-                _current = Observable.Interval(TimeSpan.FromMilliseconds(delayMs)).ObserveOn(AvaloniaScheduler.Instance).Subscribe((i) =>
-                {
-                    CefRuntime.DoMessageLoopWork();
-                });
+                // System.Threading.Timer rather than DispatcherTimer: WM_TIMER can be starved by the hosting message loop
+                _current = new Timer(_ => Dispatcher.UIThread.Post(CefRuntime.DoMessageLoopWork), null, delayMs, delayMs);
             }
         }
     }

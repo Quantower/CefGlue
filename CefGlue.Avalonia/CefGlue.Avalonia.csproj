@@ -20,8 +20,6 @@
 
   <ItemGroup>
     <PackageReference PrivateAssets="all" Include="Avalonia" />
-    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
-    <PackageReference Include="ReactiveUI.Avalonia" />
   </ItemGroup>
 
   <ItemGroup>
