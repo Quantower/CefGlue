@@ -226,11 +226,11 @@ namespace Xilium.CefGlue.Common
                 Popup.RenderSurface.DeviceScaleFactor = deviceScaleFactor;
 
                 BrowserHost?.WasResized();
-                // Might cause a crash due to a SurfaceSync check in chromium code.
-                //
-                // Fixed in chromium versions >= 79.0.3909.0 (https://chromium-review.googlesource.com/c/chromium/src/+/1792459)
-                //
-                //_browserHost?.NotifyScreenInfoChanged();
+
+                // WasResized only re-queries the view rect; the documented trigger for a scale change is this one.
+                // The SurfaceSync crash that kept it commented out was fixed in chromium 79.0.3909.0
+                // (https://chromium-review.googlesource.com/c/chromium/src/+/1792459).
+                BrowserHost?.NotifyScreenInfoChanged();
             });
         }
 
