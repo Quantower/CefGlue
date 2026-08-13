@@ -72,13 +72,7 @@ namespace Xilium.CefGlue.Avalonia.Platform
             control.TextInput += OnTextInput;
 
             var image = CreateImage();
-            var viewbox = new Viewbox()
-            {
-                Child = image,
-                Stretch = Stretch.Fill,
-                StretchDirection = StretchDirection.Both
-            };
-            SetContent(viewbox);
+            SetContent(image);
             RenderSurface = new AvaloniaRenderSurface(image);
         }
 
