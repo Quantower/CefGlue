@@ -67,12 +67,8 @@ namespace Xilium.CefGlue.Common.Helpers
 
         public Task Render(IntPtr buffer, int width, int height, CefRectangle[] dirtyRects)
         {
-            // When browser size changed - we just skip frame updating.
-            // This is dirty precheck to do not do Invoke whenever is possible.
-            if (width != ScaledWidth || height != ScaledHeight)
-            {
-                return Task.CompletedTask;
-            }
+            // A frame that lags the target by a resize step is still worth showing: during a drag the
+            // target moves faster than CEF renders, so dropping those leaves the new area unpainted.
 
             lock (_renderLock)
             {
@@ -101,12 +97,6 @@ namespace Xilium.CefGlue.Common.Helpers
                 {
                     lock (_renderLock)
                     {
-                        // quick size check - actual browser size changed?
-                        if (width != ScaledWidth || height != ScaledHeight)
-                        {
-                            return;
-                        }
-
                         if (imageBuffer.IsInvalid || imageBuffer.IsClosed)
                         {
                             // buffer is not valid anymore, bail-out
