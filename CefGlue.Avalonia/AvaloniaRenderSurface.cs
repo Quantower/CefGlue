@@ -50,6 +50,11 @@ namespace Xilium.CefGlue.Avalonia
             _bitmap?.Dispose();
             _bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(Dpi, Dpi), PixelFormat.Bgra8888, AlphaFormat.Opaque);
             Image.Source = _bitmap;
+
+            // Image.Render centers the source in its bounds, so a frame lagging the control size would
+            // be trimmed on both edges - shifting the content. Sizing the image to the frame anchors it.
+            Image.Width = width / DeviceScaleFactor;
+            Image.Height = height / DeviceScaleFactor;
         }
 
         protected override Action BeginBitmapUpdate()

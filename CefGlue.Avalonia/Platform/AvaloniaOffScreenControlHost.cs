@@ -48,6 +48,8 @@ namespace Xilium.CefGlue.Avalonia.Platform
         public AvaloniaOffScreenControlHost(Control control, IAvaloniaList<Visual> visualChildren) :
             base(control, visualChildren)
         {
+            control.ClipToBounds = true;
+
             DragDrop.SetAllowDrop(control, true);
 
             control.AttachedToVisualTree += OnAttachedToVisualTree;
