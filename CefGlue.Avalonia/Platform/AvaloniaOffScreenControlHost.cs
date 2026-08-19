@@ -336,7 +336,7 @@ namespace Xilium.CefGlue.Avalonia.Platform
             return new Image()
             {
                 Focusable = false,
-                Stretch = Stretch.None,
+                Stretch = Stretch.Fill,
                 HorizontalAlignment = global::Avalonia.Layout.HorizontalAlignment.Left,
                 VerticalAlignment = global::Avalonia.Layout.VerticalAlignment.Top,
             };

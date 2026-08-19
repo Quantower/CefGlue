@@ -48,7 +48,9 @@ namespace Xilium.CefGlue.Avalonia
         {
             // TODO handle transparency
             _bitmap?.Dispose();
-            _bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(Dpi, Dpi), PixelFormat.Bgra8888, AlphaFormat.Opaque);
+            // Must stay 96: Image.Render derives sourceRect from Bitmap.Size (DIP) while the backend
+            // consumes it as pixels, so any other DPI crops the frame by exactly that factor.
+            _bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(DefaultDpi, DefaultDpi), PixelFormat.Bgra8888, AlphaFormat.Opaque);
             Image.Source = _bitmap;
 
             // Image.Render centers the source in its bounds, so a frame lagging the control size would
