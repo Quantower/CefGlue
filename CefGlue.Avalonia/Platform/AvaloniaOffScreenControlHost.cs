@@ -165,6 +165,12 @@ namespace Xilium.CefGlue.Avalonia.Platform
 
         private void OnPointerExited(object sender, PointerEventArgs e)
         {
+            // A captured pointer has not left anything: this exit is the one Capture() manufactures, and it would reach the page as a mouse-leave mid-click.
+            if (e.Pointer.Captured != null)
+            {
+                return;
+            }
+
             MouseLeave?.Invoke(e.AsCefMouseEvent(MousePositionReferential));
         }
 
