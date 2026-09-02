@@ -14,11 +14,7 @@ One commit per patch — a CEF bump upstream should be a rebase with cherry-pick
 | Notify CEF when the device scale changes | `CefGlue.Common/CommonOffscreenBrowserAdapter.cs` | `WasResized()` re-queries the view rect only. `NotifyScreenInfoChanged()` was commented out over a SurfaceSync crash fixed in chromium 79.0.3909.0 — forty versions below the one this binding targets. |
 | Show frames that lag the target size | `CefGlue.Common/Helpers/OffScreenRenderSurface.cs` | `Render` dropped every frame whose size differed from the current target. Measured over a five-second drag: 142 drops against 67 frames shown, so the newly exposed area stayed blank until the drag ended. |
 | Anchor the frame to the corner | `AvaloniaRenderSurface.cs`, `Platform/AvaloniaOffScreenControlHost.cs` | `Image.Render` centers the source in its bounds, so a frame trailing the control by 8px lost 4px at each edge and the page jumped upwards on every shrink step. Sizing the image to the frame makes centering a no-op; the control clips the overflow. |
-
-Not taken: the OSR host registers its own OS drop target (`DragDrop.SetAllowDrop` in the
-`AvaloniaOffScreenControlHost` constructor), which swallows drags before the hosting window sees
-them. Left alone until the DOM-level alternative is measured — see
-`docs/cefglue-avalonia-fork.md` §3 in the terminal repo.
+| Let the OSR frame follow the host's `AllowDrop` | `Platform/AvaloniaOffScreenControlHost.cs` | The browser could not be a drop target at all. `AllowDrop` inherits down the *logical* tree, the frame is a visual-only child, and `DragDropDevice.GetTarget` tests `AllowDrop` on the visual it hit alone — no ancestor walk — so it found no target over the browser and raised no drag event anywhere, not even on the hosting window. The hardcoded `SetAllowDrop(control, true)` never helped: that control draws nothing and hit-testing is draw-list based, so it is never the hit. The frame now binds to the control's value, which the host supplies (`WebViewControl-Avalonia` binds the browser to its `WebView` the same way), so a window that refuses drops still refuses them. |
 
 ## Invariants
 

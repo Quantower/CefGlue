@@ -50,8 +50,6 @@ namespace Xilium.CefGlue.Avalonia.Platform
         {
             control.ClipToBounds = true;
 
-            DragDrop.SetAllowDrop(control, true);
-
             control.AttachedToVisualTree += OnAttachedToVisualTree;
             control.DetachedFromVisualTree += OnDetachedFromVisualTree;
 
@@ -75,6 +73,10 @@ namespace Xilium.CefGlue.Avalonia.Platform
             control.TextInput += OnTextInput;
 
             var image = CreateImage();
+
+            // The frame is a visual-only child, so it inherits nothing, and DragDropDevice tests AllowDrop on the visual it hit alone.
+            image[!DragDrop.AllowDropProperty] = control[!DragDrop.AllowDropProperty];
+
             SetContent(image);
             RenderSurface = new AvaloniaRenderSurface(image);
         }
