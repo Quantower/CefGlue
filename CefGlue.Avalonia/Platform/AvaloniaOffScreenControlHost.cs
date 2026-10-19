@@ -102,6 +102,18 @@ namespace Xilium.CefGlue.Avalonia.Platform
             var handled = false;
             KeyDown?.Invoke(e.AsCefKeyEvent(false), out handled);
 
+            // Avalonia raises no TextInput for control characters, so Chromium would never get the char event that inserts the line break.
+            if (e.Key == Key.Enter && (e.KeyModifiers & ~KeyModifiers.Shift) == KeyModifiers.None)
+            {
+                KeyDown?.Invoke(new CefKeyEvent()
+                {
+                    EventType = CefKeyEventType.Char,
+                    WindowsKeyCode = '\r',
+                    Character = '\r',
+                    Modifiers = e.KeyModifiers.AsCefKeyboardModifiers()
+                }, out _);
+            }
+
             var key = e.Key;
             if (key == Key.Tab  // Avoid tabbing out the web browser control
                 || key == Key.Home || key == Key.End // Prevent keyboard navigation using home and end keys
