@@ -33,7 +33,7 @@ namespace CefGlue.Tests
 
             var initializationTaskCompletionSource = new TaskCompletionSource<bool>();
 
-            CefRuntimeLoader.Initialize(customSchemes: new[] { 
+            CefRuntimeLoader.Initialize(settings: new Xilium.CefGlue.CefSettings { WindowlessRenderingEnabled = true }, customSchemes: new[] {
                 new CustomScheme()
                 {
                     SchemeName = CustomSchemeHandlerFactory.SchemeName,
