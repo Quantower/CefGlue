@@ -28,7 +28,6 @@ namespace Xilium.CefGlue.Avalonia.Platform
         private PointerPressedEventArgs _lastPointerEvent;
         private Cursor _currentDragCursor;
         private Cursor _previousCursor;
-        private IDisposable _tooltipTimer;
 
         public event Action LostFocus;
         public event KeyEventHandler KeyDown;
@@ -292,32 +291,30 @@ namespace Xilium.CefGlue.Avalonia.Platform
             Dispatcher.UIThread.Post(
                 () =>
                 {
-                    _tooltipTimer?.Dispose();
-                    _tooltipTimer = null;
-
-                    if (string.IsNullOrEmpty(text))
+                    ToolTip.SetTip(_control, null);
+                    if (string.IsNullOrEmpty(text) || !_control.IsPointerOver)
                     {
-                        ToolTip.SetIsOpen(_control, false);
-                        // A Tip left on the control is reopened by Avalonia's ToolTipService the next time the pointer enters it.
-                        ToolTip.SetTip(_control, null);
                         return;
                     }
 
+                    // ToolTipService restarts ShowDelay only for a newly hovered control, and no pointer event follows this text to tell it.
+                    UpdateToolTipService();
                     ToolTip.SetTip(_control, text);
-                    if (!ToolTip.GetIsOpen(_control))
-                    {
-                        _tooltipTimer = DispatcherTimer.RunOnce(OpenTooltip, TimeSpan.FromMilliseconds(ToolTip.GetShowDelay(_control)));
-                    }
+                    UpdateToolTipService();
                 }, DispatcherPriority.Input);
         }
 
-        private void OpenTooltip()
+        // Enabling ServiceEnabled re-runs ToolTipService.Update; TopLevel offsets a child's area twice, hence the root.
+        private void UpdateToolTipService()
         {
-            _tooltipTimer = null;
-            if (_control.IsPointerOver)
+            if (_topLevel == null)
             {
-                ToolTip.SetIsOpen(_control, true);
+                return;
             }
+
+            ToolTip.SetServiceEnabled(_topLevel, false);
+            ToolTip.SetServiceEnabled(_topLevel, true);
+            _topLevel.ClearValue(ToolTip.ServiceEnabledProperty);
         }
 
         public void Focus()
